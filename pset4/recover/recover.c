@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <stdlib.h>
 
 
 int main (int argc, char *argv[])
@@ -23,38 +22,22 @@ int main (int argc, char *argv[])
         return 1;
     }
     
-   unsigned char* buffer = malloc(sizeof(unsigned char)*512);
-   char* filename = malloc(10*sizeof(char));
-   
-   FILE* img;
-   
-   int fileCounter = 0;
-   bool start = 0;
-   
-   while (fread(buffer, 512, 1 , inptr) !=0)
+    int buffer[512];
+    char filename[50];
+    int fileCounter = 0;
+    bool start = false;
+    do
     {
+        fread(buffer, 1, 512, inptr);
+        
         // start of a new JPG? (if yes?)
-        if((int) buffer[0]==255 && (int) buffer[1]==0xd8 && (int) buffer[2]==255 && (int) buffer[3]>=0xe0 && (int) buffer[3]<=0xef)
+        if (buffer[0] == 0xff && buffer[1] == 0xd8 && buffer[2] == 0xff && (buffer[3] & 0xf0) == 0xe0)
         {
-            if (start == true)
-            {
-                fclose(img);
-            }
-            else 
-            {
-                start = true;
-            }
-            
             sprintf(filename, "%03i.jpg",fileCounter);
-            
-            img = fopen(filename,"w");
-            if (img == NULL)
-            {
-                fprintf(stderr, "Could not open %s.\n",infile);
-                return 2;
-            }
-            
-            fwrite(buffer, 512, 1, img);
+            FILE *img = fopen(filename,"w");
+            fwrite(&buffer, 1, 512, img);
+            start = true;
+            fclose(img);
             fileCounter++;
         }
         // Start of a new JPG (if no?)
@@ -63,14 +46,13 @@ int main (int argc, char *argv[])
             // have you already started a JPG?
            if (start == true) 
            {
-               fwrite(buffer, 512, 1, img);
+               sprintf(filename, "%03i.jpg",fileCounter);
+               FILE *img = fopen(filename,"w");
+               fwrite(buffer, 1, 512, img);
+               fclose(img);
            }
         }
     }
+    while (fread(buffer, 1, 512, inptr));
     
-    free(buffer);
-    free(filename);
-    fclose(img);
-    fclose(inptr);
-    return 0;
 }

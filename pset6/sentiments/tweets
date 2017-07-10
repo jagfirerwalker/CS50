@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import helpers
+import nltk
+
+from nltk.tokenize import TweetTokenizer
+from analyzer import Analyzer
+from termcolor import colored
+
+def main():
+    
+    # ensure proper usage
+    if len(sys.argv) != 2:
+        sys.exit("Usage: ./tweet twitter handle")
+    
+    # if handle can't be pulled raise error else get 200 last tweets from entered handle
+    if helpers.get_user_timeline(sys.argv[1]) == None:
+        print("Error")
+        sys.exit
+    else:
+        tweets = helpers.get_user_timeline(sys.argv[1])
+    
+    # setup of twitter tokenizer http://www.nltk.org/api/nltk.tokenize.html
+    tknzr = TweetTokenizer(strip_handles=True, reduce_len=True)
+    tweetwords = tknzr.tokenize(str(tweets))
+    
+    # absolute paths to lists
+    positives = os.path.join(sys.path[0], "positive-words.txt")
+    negatives = os.path.join(sys.path[0], "negative-words.txt")
+    
+    
+    # instantiate analyzer
+    analyzer = Analyzer(positives, negatives)
+    
+    # get score from the analyzer setup, exactly as in the smile function.
+    positive, negative, neutral = analyzer.analyze(tweetwords)
+        
+    print(colored(positive, "green"))
+    print(colored(negative, "red"))
+    print(colored(neutral, "yellow"))
+    
+if __name__ == "__main__":
+    main()
