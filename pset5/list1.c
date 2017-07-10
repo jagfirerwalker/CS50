@@ -235,7 +235,8 @@ void search(void)
     printf("ID to search for: ");
     int id = get_int();
 
-    // get list's first node
+    // get list's first node 
+    //make a copy pointer of the first note so nothing will happen
     node *ptr = first;
 
     // search for student
@@ -247,6 +248,7 @@ void search(void)
             sleep(1);
             break;
         }
+        // move through the steps by moving the point to pointer next
         ptr = ptr->next;
     }
 }
@@ -266,6 +268,6 @@ void traverse(void)
     }
 
     // pause before continuing
-    sleep(1);
+    sleep(100);
     printf("\n\n");
 }

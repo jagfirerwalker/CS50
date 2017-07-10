@@ -1,0 +1,28 @@
+0. What is pneumonoultramicroscopicsilicovolcanoconiosis?
+    Longest word in English laguage, published by the national puzzle organisation to describe a form of lung cancer.
+
+1. According to its man page, what does getrusage do?
+    Returns resource usage measures for the calling process, which is the sum of resources used by all threads in the process.
+    Return resource usage statistics for all children of the calling process that have terminated and been waited for.
+    Return resource usage statistics for the calling thread.
+
+2. Per that same man page, how many members are in a variable of type struct rusage?
+    16
+    
+3. Why do you think we pass before and after by reference (instead of by value) to calculate, even though we’re not changing their contents?
+    Because getrusage expect a pointer
+4. Explain as precisely as possible, in a paragraph or more, how main goes about reading words from a file. In other words, convince us that you indeed understand how that function’s for loop works.
+    1. Create a loop in which c is the character in the file of fp, as long as it isn't the last one. And keep going character by character
+    2. If the c is a valid letter or c = ' and is bigger than index 0, then put c into the array of word at index postition 0 and increase index to 1.
+    2a if the length of index is bigger than the longest word in the dictionary, go through the letters and set index 0
+    3. If is not letter, but a digit, circle through the numbers and set index 0
+    4. If not a letter or not a number, and starting apostrophes it must have found whole word. Then add the string end symbol \0 at its current index number, put the word counter up, check the word is in the dictionary, time it and if it isn't added to the misspelled list.
+    4a. If it is mispelled print it and put misspelled counter up and set index to 0.
+    
+5. Why do you think we used fgetc to read each word’s characters one at a time rather than use fscanf with a format string like "%s" to read whole words at a time? Put another way, what problems might arise by relying on fscanf alone?
+    fgetc reads out 1 character at the time. Fscanf doesn't. It means that extra steps have to be taken and more rules have to be applied to make sure that each character falls into the rules laid out.
+    
+6. Why do you think we declared the parameters for check and load as const (which means "constant")?
+    These are pointers to a constant character. These pointers cannot change the values that they are pointing to. 
+    This is useful for functions like load and check whose job is not to change the elements in the WORD array, but only to read them. 
+    Other pointers, however, can change the value of the chars stored in the WORD array, allowing MAIN to pass a new string to the CHECK function, while taking extra steps to ensure that CHECK does not modify it.
